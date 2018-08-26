@@ -9,10 +9,7 @@ const sequelize = new Sequelize(null, null, null, {
     }
 });
 
-/*******
- * TODO: Definição dos modelos.
- * Defina aqui os modelos a serem mapeados para entidades do banco de dados.
- *******/
+//Tabela usuario
 const Usuario = sequelize.define('usuario', {
    id: {
        primaryKey: true,
@@ -42,6 +39,7 @@ const Usuario = sequelize.define('usuario', {
    }
 });
 
+//Tabela Tarefa com fk de Usuario
 const Tarefa = sequelize.define('tarefa', {
     id: {
         primaryKey: true,
@@ -68,11 +66,7 @@ const Tarefa = sequelize.define('tarefa', {
     }
 })
 
-/*******
- * TODO: Definição das relações.
- * Defina aqui os relacionamentos entre os modelos.
- *******/
-
+//Opções adicionais para a tabela usuario
 Usuario.hasMany(Tarefa, {
   onDelete: 'NO ACTION',
   onUpdate: 'NO ACTION'
