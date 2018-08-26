@@ -1,6 +1,6 @@
 const { Usuario } = require ('../models');
-const {gerarToken} = require('../utils/token');
-
+const { gerarToken } = require('../utils/token');
+const { mensagens } = require('../utils/customMensagens');
 
 const cadastro = (request, response) =>  {
 
@@ -15,7 +15,7 @@ const cadastro = (request, response) =>  {
     })
     .catch( ex => {
         console.error(ex);
-        response.status(412).send('não foi possível incluir o registro')
+        response.status(412).send(mensagens.falhaDB)
     })
 }
 
@@ -26,14 +26,14 @@ const buscaPorId = (request, response) =>  {
     Usuario.findById(usuarioId)
     .then(usuario => {
         if (!usuario){
-            response.status(404).send('usuário não encontrado')
+            response.status(404).send(mensagens.usuarioSumiu)
         }else{
             response.status(200).json(usuario)
         }
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
@@ -45,7 +45,7 @@ const editar = (request, response) =>  {
     Usuario.findById(usuarioId)
     .then( usuario => {
         if (!usuario){
-            response.status(404).send('usuário não encontrado')
+            response.status(404).send(mensagens.usuarioSumiu)
         }else{
             return usuario.update({
                 nome, email, cpf, nascimento, senha
@@ -57,7 +57,7 @@ const editar = (request, response) =>  {
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 }
 
@@ -75,33 +75,33 @@ const login = (request, response) =>  {
         if(usuario !== null){
 
             const token = gerarToken(usuario);
-            response.status(200).cookie('token',token).send('usuário logado')
+            response.status(200).cookie('token',token).send(mensagens.sucesso)
 
         }else{
 
-            response.status(401).send('E-mail ou senha inválidos')
+            response.status(401).send(mensagens.autenticaçãoFalha)
 
         }
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possivel consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 }
 
-const usuario = (request, response) => {
+const validarUsuario = (request, response) => {
     response.json(request.usuarioLogado);
 }
 
 const logout = (request, response) => {
     request.usuarioLogado = null;
-    response.status(200).cookie('token',null).send('usuário deslogado')
+    response.status(200).cookie('token',null).send(mensagens.falha)
 }
 
 module.exports = {
     cadastro,
     buscaPorId,
-    usuario,
+    validarUsuario,
     editar,
     login,
     logout

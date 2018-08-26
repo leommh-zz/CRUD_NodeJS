@@ -1,40 +1,25 @@
 const express = require('express');
 const router = express.Router();
-
 const validateSchema = require('./validateSchema');
+
+//Importações Internas
 const controller = require('../controllers/usuarios');
-
 const { autenticarToken } = require('../utils/token');
-
 const { isCPF, isDate } = require('../utils/customValidators');
 
-/*******
- * TODO: Definição das rotas do CRUD de Usuários e Login.
- * Exemplo:
- * 
- * const validateBody = {
- *   // Schema de validação do Express Validator
- * };
- * 
- * 
- * router.post('/',
- *   validateSchema(validateBody),
- *   controller.cadastro
- * );
- *******/
-
+//Variável com as configurações de validação
 const validateBody = {
     nome: {
         in: "body",
         isString: true,
         notEmpty: true,
-        errorMessage: "Informe o nome do usuário."
+        errorMessage: "Nome inválido, por favor informe novamente!"
     },
     email: {
         in: "body",
         isString: true,
         notEmpty: true,
-        errorMessage: "Informe o email."
+        errorMessage: "Email inválido, por favor informe novamente!"
     },
     cpf: {
         in: "body",
@@ -43,13 +28,13 @@ const validateBody = {
         custom: {
             options: (value => isCPF(value))
         },
-        errorMessage: "CPF Inválido"
+        errorMessage: "CPF inválido, por favor informe novamente!"
     },
     senha: {
         in: "body",
         isString: true,
         notEmpty: true,
-        errorMessage: "Senha Inválida"
+        errorMessage: "Senha inválida, por favor informe novamente!"
     },
     nascimento: {
         in: "body",
@@ -58,15 +43,26 @@ const validateBody = {
         custom: {
             options: (value => isDate(value, "YYYY-MM-DD"))
         },
-        errorMessage: "Nascimento Inválido"
+        errorMessage: "Data de nascimento inválida, por favor informe novamente!"
     }
 }
 
-router.get('/', autenticarToken, controller.usuario)
+//Testa se o usuário está logado e mostra caso esteja
+router.get('/', autenticarToken, controller.validarUsuario)
+
+//Cadastra um usuário
 router.post('/', validateSchema(validateBody), controller.cadastro)
-router.post('/login', controller.login)
-router.get('/logout', autenticarToken, controller.logout)
+
+//Busca um usuário
 router.get('/:usuarioId', controller.buscaPorId)
-router.put('/:usuarioId', autenticarToken, controller.editar)
+
+//Edita um usuário
+router.put('/:usuarioId', validateSchema(validateBody),autenticarToken, controller.editar)
+
+//Faz o login do usuário
+router.post('/login', controller.login)
+
+//Faz o logout do usuário
+router.get('/logout', autenticarToken, controller.logout)
 
 module.exports = router;

@@ -1,5 +1,5 @@
-
 const { Tarefa } = require('../models');
+const { mensagens } = require('../utils/customMensagens');
 
 const cadastro = (request, response) => {
 
@@ -15,7 +15,7 @@ const cadastro = (request, response) => {
     })
     .catch( ex => {
         console.error(ex);
-        response.status(412).send('não foi possível incluir o registro')
+        response.status(412).send(mensagens.falha)
     })
 
 }
@@ -30,14 +30,14 @@ const listagem = (request, response) => {
 	}
 	}).then(tarefa => {
 		if(!tarefa){
-			response.status(404).send('nenhuma tarefa encontrada')
+			response.status(404).send(mensagens.tarefaSumiu)
 		}else{
 			response.status(200).json(tarefa);
 		}
 	})
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
@@ -49,14 +49,14 @@ const buscaPorId = (request, response) => {
     Tarefa.findById(tarefaId)
     .then(tarefa => {
         if (!tarefa){
-            response.status(404).send('tarefa não encontrada')
+            response.status(404).send(mensagens.tarefaSumiu)
         }else{
             response.status(200).json(tarefa)
         }
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
@@ -67,7 +67,7 @@ const editar = (request, response) => {
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
         if (!tarefa){
-            response.status(404).send('tarefa não encontrada')
+            response.status(404).send(mensagens.tarefaSumiu)
         }else{
             return tarefa.update({
                 titulo, descricao
@@ -79,11 +79,11 @@ const editar = (request, response) => {
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 }
 
-const remocao = (request, response) => {
+const remover = (request, response) => {
 
     const { params:{tarefaId} } = request;
 
@@ -99,12 +99,12 @@ const remocao = (request, response) => {
         }
         else
         {
-            response.status(404).send('Tarefa deletada')
+            response.status(404).send(mensagens.sucesso)
         }
     })
     .catch(ex => {
         console.error(ex)
-        response.status(412).send('Não foi possivel deletar a tarefa')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
@@ -116,7 +116,7 @@ const marcarConcluida = (request, response) => {
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
         if (!tarefa){
-            response.status(404).send('tarefa não encontrada')
+            response.status(404).send(mensagens.tarefaSumiu)
         }else{
             return tarefa.update({
                 concluida: 1
@@ -128,19 +128,19 @@ const marcarConcluida = (request, response) => {
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
 
 const desmarcarConcluida = (request, response) => {
 
-	const { params:{ tarefaId }, body:{ titulo, descricao }} = request;
+	const { params:{ tarefaId } } = request;
 
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
         if (!tarefa){
-            response.status(404).send('tarefa não encontrada')
+            response.status(404).send(mensagens.tarefaSumiu)
         }else{
             return tarefa.update({
                 concluida: 0
@@ -152,7 +152,7 @@ const desmarcarConcluida = (request, response) => {
     })
     .catch(ex=>{
         console.error(ex)
-        response.status(412).send('não foi possível consultar o banco de dados')
+        response.status(412).send(mensagens.falhaDB)
     })
 
 }
@@ -162,7 +162,7 @@ module.exports = {
     listagem,
     buscaPorId,
     editar,
-    remocao,
+    remover,
     marcarConcluida,
     desmarcarConcluida,
 };

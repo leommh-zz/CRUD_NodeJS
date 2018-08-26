@@ -1,52 +1,48 @@
 const express = require('express');
 const router = express.Router();
 
-//const { authenticationMiddleware } = require('../utils/token');
-
+//Importações Internas
 const { autenticarToken } = require('../utils/token');
-
 const validateSchema = require('./validateSchema');
 const controller = require('../controllers/tarefas');
 
-/*******
- * TODO: Definição das rotas do CRUD de Tarefas.
- * Exemplo:
- * 
- * const validateBody = {
- *   // Schema de validação do Express Validator
- * };
- * 
- * 
- * router.post('/',
- *   validateSchema(validateBody),
- *   authenticationMiddleware,
- *   controller.cadastro,
- * );
- *******/
-
+//Variável com as configurações de validação
 const validateBody = {
     titulo: {
         in: "body",
         isString: true,
         notEmpty: true,
-        errorMessage: "Informe o titulo."
+        errorMessage: "Titulo inválido, por favor informe novamente!"
     },
     descricao: {
     	in: "body",
     	isString: true,
     	notEmpty: true,
-    	errorMessage: "Informe a descrição."
+    	errorMessage: "Descrição inválida, por favor informe novamente!"
     }
 }
 
-
+//Listar todas as tarefas
 router.get('/',autenticarToken, controller.listagem);
+
+//Cadastrar uma nova tarefa
 router.post('/', autenticarToken, validateSchema(validateBody), controller.cadastro);
+
+//Buscar uma tarefa por ID
 router.get('/:tarefaId', autenticarToken, controller.buscaPorId);
-router.put('/:tarefaId', autenticarToken, controller.editar);
-router.delete('/:tarefaId', autenticarToken, controller.remocao);
+
+//Editar uma tarefa
+router.put('/:tarefaId', autenticarToken, validateSchema(validateBody), controller.editar);
+
+//Marcar uma tarefa como concluída
 router.put('/:tarefaId/concluida', autenticarToken, controller.marcarConcluida);
+
+//Desmarcar uma tarefa concluída
 router.delete('/:tarefaId/concluida', autenticarToken, controller.desmarcarConcluida);
+
+//Deletar uma tarefa
+router.delete('/:tarefaId', autenticarToken, controller.remover);
+
 
 
 module.exports = router;

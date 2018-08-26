@@ -1,16 +1,15 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = '&uaQ76gR#SQPthHV82#Dt=HnUwzbM8KnP&T#uTvG*NsQZMspRt';
+const SECRET_KEY = 'Dp7XpRVAl5ThxGROJAroQ00zrEvPNxO6ns7rUGA3F6K0JybaNb';
 
-function autenticarToken (request, response, next){
+const autenticarToken = (request, response, next) => {
 
-	const { cookies: {token} } = request;
+	const { cookies: { token } } = request;
 
     try {
         const payload = jwt.verify(token, SECRET_KEY);
         console.log('Token válido', payload);
         request.usuarioLogado = payload;
         next();
-        //response.status(200).send('Acesso permitido');
     }
     catch (exception) {
         console.error('Token inválido', exception);
@@ -19,13 +18,13 @@ function autenticarToken (request, response, next){
 
 }
 
-function gerarToken (usuario){
+const gerarToken = usuario => {
 	const { id, nome, email, cpf, nascimento } = usuario
 	const payload = { id, nome, email, cpf, nascimento}
 	return jwt.sign(payload, SECRET_KEY);
 }
 
 module.exports = {
-	gerarToken,
-	autenticarToken
+    autenticarToken,
+    gerarToken
 }
