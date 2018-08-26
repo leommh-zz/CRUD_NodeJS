@@ -1,0 +1,7 @@
+   userID: {
+        type: Sequelize.BIGINT,
+        references: {
+          model: "user",
+          key: "id"
+        }
+    }
