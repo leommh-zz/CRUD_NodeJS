@@ -57,7 +57,7 @@ router.post('/', validateSchema(validateBody), controller.cadastro)
 router.get('/:usuarioId', controller.buscaPorId)
 
 //Edita um usuário
-router.put('/:usuarioId', validateSchema(validateBody),autenticarToken, controller.editar)
+router.put('/:usuarioId', validateSchema(validateBody), autenticarToken, controller.editar)
 
 //Faz o login do usuário
 router.post('/login', controller.login)

@@ -23,7 +23,7 @@ const validateBody = {
 }
 
 //Listar todas as tarefas
-router.get('/',autenticarToken, controller.listagem);
+router.get('/', autenticarToken, controller.listagem);
 
 //Cadastrar uma nova tarefa
 router.post('/', autenticarToken, validateSchema(validateBody), controller.cadastro);
@@ -34,15 +34,13 @@ router.get('/:tarefaId', autenticarToken, controller.buscaPorId);
 //Editar uma tarefa
 router.put('/:tarefaId', autenticarToken, validateSchema(validateBody), controller.editar);
 
+//Deletar uma tarefa
+router.delete('/:tarefaId', autenticarToken, controller.remover);
+
 //Marcar uma tarefa como concluída
 router.put('/:tarefaId/concluida', autenticarToken, controller.marcarConcluida);
 
 //Desmarcar uma tarefa concluída
 router.delete('/:tarefaId/concluida', autenticarToken, controller.desmarcarConcluida);
-
-//Deletar uma tarefa
-router.delete('/:tarefaId', autenticarToken, controller.remover);
-
-
 
 module.exports = router;

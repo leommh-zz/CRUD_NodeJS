@@ -1,3 +1,6 @@
+const Sequelize = require('sequelize');
+
+//Importações Internas
 const { Tarefa } = require('../models');
 const { mensagens } = require('../utils/customMensagens');
 
@@ -22,29 +25,46 @@ const cadastro = (request, response) => {
 
 const listagem = (request, response) => {
 
-	const { usuarioLogado: { id }} = request
-
-	Tarefa.findAll({
-	where: {
-		usuarioId: id
-	}
-	}).then(tarefa => {
-		if(!tarefa){
-			response.status(404).send(mensagens.tarefaSumiu)
-		}else{
-			response.status(200).json(tarefa);
-		}
-	})
-    .catch(ex=>{
-        console.error(ex)
-        response.status(412).send(mensagens.falhaDB)
-    })
+    const { usuarioLogado: { id }, query: { titulo } } = request;
+    
+    if (titulo){
+        const tarefaQuery = { 
+            where: { 
+                titulo: { [Sequelize.Op.like]: `%${ titulo }%` }  
+            }
+        }
+        Tarefa.findAll(tarefaQuery)
+        .then(tarefas => {
+            if(!tarefas){
+                response.status(404).send('nenhuma tarefa encontrada')
+            }else{
+                response.status(200).send(tarefas)
+            }
+        })
+    }else{
+        Tarefa.findAll({
+            where: {
+                usuarioId: id
+            }
+            }).then(tarefa => {
+                if(!tarefa){
+                    response.status(404).send(mensagens.tarefaSumiu)
+                }else{
+                    response.status(200).json(tarefa)
+                }
+            })
+            .catch(ex=>{
+                console.error(ex)
+                response.status(412).send(mensagens.falhaDB)
+                
+            })
+    }
 
 }
 
 const buscaPorId = (request, response) => {
 
-	const { params:{tarefaId} } = request
+	const { params: { tarefaId } } = request;
 
     Tarefa.findById(tarefaId)
     .then(tarefa => {
@@ -62,7 +82,7 @@ const buscaPorId = (request, response) => {
 }
 
 const editar = (request, response) => {
-	const { params:{ tarefaId }, body:{ titulo, descricao }} = request;
+	const { params: { tarefaId }, body: { titulo, descricao } } = request;
 
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
@@ -85,7 +105,7 @@ const editar = (request, response) => {
 
 const remover = (request, response) => {
 
-    const { params:{tarefaId} } = request;
+    const { params: { tarefaId } } = request;
 
     Tarefa.destroy({
         where: {
@@ -111,7 +131,7 @@ const remover = (request, response) => {
 
 const marcarConcluida = (request, response) => {
 
-	const { params:{ tarefaId }, body:{ titulo, descricao }} = request;
+	const { params: { tarefaId } } = request;
 
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
@@ -135,7 +155,7 @@ const marcarConcluida = (request, response) => {
 
 const desmarcarConcluida = (request, response) => {
 
-	const { params:{ tarefaId } } = request;
+	const { params: { tarefaId } } = request;
 
 	Tarefa.findById(tarefaId)
     .then( tarefa => {
